@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2007-2019 Crafter Software Corporation. All Rights Reserved.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
@@ -13,6 +30,7 @@
     <import resource="classpath:crafter/engine/services/scripting-context.xml"/>
     <import resource="classpath:crafter/engine/services/url-transformation-context.xml"/>
     <import resource="classpath:crafter/engine/services/targeting-context.xml"/>
+    <import resource="classpath:crafter/entitlements/entitlements-context.xml"/>
 
     <!-- ////////////////////////////////// -->
     <!--								 	-->
@@ -332,6 +350,7 @@
     <bean id="crafter.siteContextManager" class="org.craftercms.engine.service.context.SiteContextManager">
         <property name="fallbackContextFactory" ref="crafter.fallbackSiteContextFactory"/>
         <property name="contextFactory" ref="crafter.siteContextFactory"/>
+        <property name="entitlementValidator" ref="crafter.entitlementValidator"/>
     </bean>
 
     <bean id="crafter.siteContextsBootstrap" class="org.craftercms.engine.service.context.SiteContextsBootstrap">
@@ -453,6 +472,7 @@
                 <prop key="object_wrapper">org.craftercms.engine.freemarker.CrafterObjectWrapper</prop>
                 <prop key="datetime_format">${crafter.engine.model.datetime.pattern}</prop>
                 <prop key="time_zone">${crafter.engine.model.datetime.timeZone}</prop>
+                <prop key="new_builtin_class_resolver">safer</prop>
             </props>
         </property>
         <property name="freemarkerVariables" ref="crafter.freemarkerVariables"/>
@@ -578,6 +598,15 @@
         <property name="siteItemService" ref="crafter.siteItemService"/>
         <property name="defaultItemConverter" ref="crafter.navItemConverter"/>
         <property name="processors" ref="crafter.navTreeProcessors"/>
+    </bean>
+
+    <!-- ////////////////////////////////// -->
+    <!--								 	-->
+    <!--		    Entitlements  			-->
+    <!--									-->
+    <!-- ////////////////////////////////// -->
+    <bean id="crafter.entitlementsProvider" class="org.craftercms.engine.entitlement.EngineEntitlementUsageProvider">
+        <property name="siteContextManager" ref="crafter.siteContextManager"/>
     </bean>
 
     <import resource="${crafter.engine.extension.base}/services-overlay-context.xml"/>
